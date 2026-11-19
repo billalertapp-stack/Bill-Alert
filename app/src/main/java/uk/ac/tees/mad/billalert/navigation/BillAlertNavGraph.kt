@@ -6,6 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import uk.ac.tees.mad.billalert.ui.screens.SplashScreen
 
 @Composable
 fun BillAlertNavGraph(navController: NavHostController) {
@@ -14,7 +15,18 @@ fun BillAlertNavGraph(navController: NavHostController) {
         startDestination = NavRoutes.Splash.route
     ) {
         composable(NavRoutes.Splash.route) {
-
+            SplashScreen(
+                onNavigateToHome = {
+                    navController.navigate(NavRoutes.Home.route) {
+                        popUpTo(NavRoutes.Splash.route) { inclusive = true }
+                    }
+                },
+                onNavigateToAuth = {
+                    navController.navigate(NavRoutes.Auth.route) {
+                        popUpTo(NavRoutes.Splash.route) { inclusive = true }
+                    }
+                }
+            )
         }
 
         composable(NavRoutes.Auth.route) {
