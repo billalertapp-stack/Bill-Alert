@@ -31,17 +31,30 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import uk.ac.tees.mad.billalert.ui.theme.BillAlertTheme
+import uk.ac.tees.mad.billalert.ui.viewmodel.AuthUiState
+import uk.ac.tees.mad.billalert.ui.viewmodel.AuthViewModel
 
 @Composable
 fun AuthScreen(
     onAuthSuccess: () -> Unit,
+    viewModel: AuthViewModel = viewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
 
+    LaunchedEffect(uiState) {
+        if (uiState is AuthUiState.Success) onAuthSuccess()
+    }
 
+    AuthContent(
+        uiState   = uiState,
+        onSignIn  = { email, password -> viewModel.signIn(email, password) },
+        onRegister= { email, password -> viewModel.register(email, password) }
+    )
 }
 
 @Composable
 fun AuthContent(
+    uiState: AuthUiState,
     onSignIn: (String, String) -> Unit,
     onRegister: (String, String) -> Unit
 ) {
@@ -152,7 +165,19 @@ fun AuthContent(
                 shape = RoundedCornerShape(12.dp)
             )
 
-
+            // Error message
+            AnimatedVisibility(visible = uiState is AuthUiState.Error, enter = fadeIn(), exit = fadeOut()) {
+                val msg = (uiState as? AuthUiState.Error)?.message ?: ""
+                Text(
+                    text = msg,
+                    color = MaterialTheme.colorScheme.error,
+                    fontSize = 13.sp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    textAlign = TextAlign.Center
+                )
+            }
 
             Spacer(Modifier.height(24.dp))
 
@@ -165,10 +190,13 @@ fun AuthContent(
                     .fillMaxWidth()
                     .height(52.dp),
                 shape = RoundedCornerShape(12.dp),
+                enabled = uiState !is AuthUiState.Loading
             ) {
-
+                if (uiState is AuthUiState.Loading) {
+                    CircularProgressIndicator(color = Color.White, modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
+                } else {
                     Text(if (isLoginMode) "Sign In" else "Create Account", fontWeight = FontWeight.SemiBold)
-
+                }
             }
 
             Spacer(Modifier.height(16.dp))
@@ -180,6 +208,10 @@ fun AuthContent(
 @Composable
 fun AuthScreenPreview() {
     BillAlertTheme {
-        
+        AuthContent(
+            uiState    = AuthUiState.Idle,
+            onSignIn   = { _, _ -> },
+            onRegister = { _, _ -> }
+        )
     }
 }

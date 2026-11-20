@@ -71,6 +71,7 @@ dependencies {
     implementation("io.github.jan-tennert.supabase:compose-auth-ui")
     implementation("io.github.jan-tennert.supabase:storage-kt")
     implementation("io.ktor:ktor-client-cio:2.3.12")
+    implementation("io.github.jan-tennert.supabase:realtime-kt")
     implementation("io.github.jan-tennert.supabase:postgrest-kt")
     implementation("androidx.navigation:navigation-compose:2.8.5")
     implementation("androidx.compose.material:material-icons-extended:1.7.8")

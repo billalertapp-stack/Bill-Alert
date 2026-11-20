@@ -6,6 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import uk.ac.tees.mad.billalert.ui.screens.AuthScreen
 import uk.ac.tees.mad.billalert.ui.screens.SplashScreen
 
 @Composable
@@ -30,7 +31,13 @@ fun BillAlertNavGraph(navController: NavHostController) {
         }
 
         composable(NavRoutes.Auth.route) {
-
+            AuthScreen(
+                onAuthSuccess = {
+                    navController.navigate(NavRoutes.Home.route) {
+                        popUpTo(NavRoutes.Auth.route) { inclusive = true }
+                    }
+                }
+            )
         }
 
         composable(NavRoutes.Home.route) {
